@@ -126,7 +126,7 @@ const App: React.FC = () => {
           E
         </div>
       </div>
-      <button style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
         <button
           onClick={() => {
             fEl.current &&
@@ -153,7 +153,7 @@ const App: React.FC = () => {
         >
           取消监听 F
         </button>
-      </button>
+      </div>
       <div
         ref={fEl}
         style={{
