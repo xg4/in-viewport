@@ -22,5 +22,5 @@
     "target": "esnext"
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*", "rollup.config.js"]
+  "include": ["src/**/*", "demo/**/*", "rollup.config.js"]
 }
