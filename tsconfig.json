@@ -21,6 +21,6 @@
     "strictPropertyInitialization": true,
     "target": "esnext"
   },
-  "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*", "demo/**/*", "rollup.config.js"]
+  "exclude": ["node_modules", "dist", "demo/**/*"],
+  "include": ["src/**/*", "rollup.config.js"]
 }
