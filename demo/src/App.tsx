@@ -66,29 +66,6 @@ const App: React.FC = () => {
   }, [])
   return (
     <div className="container">
-      <button
-        onClick={() => {
-          fEl.current &&
-            iv.on(
-              fEl.current,
-              () => {
-                console.log('f 进入视图')
-              },
-              () => {
-                console.log('f 离开视图')
-              }
-            )
-        }}
-      >
-        监听 F
-      </button>
-      <button
-        onClick={() => {
-          fEl.current && iv.off(fEl.current)
-        }}
-      >
-        取消监听 F
-      </button>
       <div
         ref={aEl}
         style={{
@@ -119,7 +96,9 @@ const App: React.FC = () => {
           ref={cEl}
           style={{
             ...BoxStyle,
-            flex: 1
+            flex: 1,
+            color: '#333',
+            backgroundColor: '#f90'
           }}
         >
           C
@@ -128,7 +107,9 @@ const App: React.FC = () => {
           ref={dEl}
           style={{
             ...BoxStyle,
-            flex: 1
+            flex: 1,
+            color: '#333',
+            backgroundColor: '#f9f'
           }}
         >
           D
@@ -137,12 +118,42 @@ const App: React.FC = () => {
           ref={eEl}
           style={{
             ...BoxStyle,
-            flex: 1
+            flex: 1,
+            color: '#333',
+            backgroundColor: '#99f'
           }}
         >
           E
         </div>
       </div>
+      <button style={{ display: 'flex', justifyContent: 'center' }}>
+        <button
+          onClick={() => {
+            fEl.current &&
+              iv.on(
+                fEl.current,
+                () => {
+                  console.log('f 进入视图')
+                },
+                () => {
+                  console.log('f 离开视图')
+                }
+              )
+          }}
+          style={{
+            margin: '0 20px'
+          }}
+        >
+          监听 F
+        </button>
+        <button
+          onClick={() => {
+            fEl.current && iv.off(fEl.current)
+          }}
+        >
+          取消监听 F
+        </button>
+      </button>
       <div
         ref={fEl}
         style={{
