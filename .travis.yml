@@ -1,0 +1,26 @@
+language: node_js
+
+node_js:
+  - '10'
+
+script:
+  - npm run build
+
+before_deploy:
+  - cd ./demo && yarn && npm run build
+
+deploy:
+  - provider: pages
+    local_dir: ./demo/dist
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    keep_history: false
+    on:
+      branch: master
+
+branches:
+  only:
+    - master
+
+cache:
+  yarn: true
