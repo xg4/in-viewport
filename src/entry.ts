@@ -16,7 +16,7 @@ export default class Entry {
   public enterCallback: Function
   private leaveCallback: Function
 
-  get shouldDestroy() {
+  get shouldDestroyByOnce() {
     return this.isInit && this.once
   }
 
