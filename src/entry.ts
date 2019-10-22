@@ -11,10 +11,14 @@ export type EntryOptionsWithoutEl = Omit<EntryOptions, 'el'>
 
 export default class Entry {
   public el: Element
-  public isInit: boolean
-  public once: boolean
+  private isInit: boolean
+  private once: boolean
   public enterCallback: Function
   private leaveCallback: Function
+
+  get shouldDestroy() {
+    return this.isInit && this.once
+  }
 
   constructor({
     el,

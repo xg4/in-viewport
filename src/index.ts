@@ -66,7 +66,7 @@ export default class InViewport {
         target.onEnter(entry, observer)
       } else {
         target.onLeave(entry, observer)
-        if (target.once && target.isInit) {
+        if (target.shouldDestroy) {
           this.off(target.el)
         }
       }
