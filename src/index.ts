@@ -16,37 +16,40 @@ export default class InViewport {
     this.cache = new WeakMap()
   }
 
-  public on(el: Element, options?: OnOptions, onLeave?: Function) {
-    if (typeof options === 'function') {
-      options = { onEnter: options }
-      if (typeof onLeave === 'function') {
-        options = { ...options, onLeave, el }
-      }
-    }
-    options = { ...options, el }
+  public on(el: Element, onEnter?: OnOptions, onLeave?: Function) {
     if (this.cache.has(el)) {
       return this
     }
+    const options = this.parseOptions(el, onEnter, onLeave)
     this.cache.set(el, new Entry(options))
     this.observer.observe(el)
     return this
   }
 
-  public once(el: Element, options?: OnOptions, onLeave?: Function) {
-    if (typeof options === 'function') {
-      options = { onEnter: options }
-      if (typeof onLeave === 'function') {
-        options = { ...options, onLeave, el }
-      }
-    }
-    options = { ...options, once: true }
-    return this.on(el, options, onLeave)
+  public once(el: Element, onEnter?: OnOptions, onLeave?: Function) {
+    return this.on(el, {
+      ...this.parseOptions(el, onEnter, onLeave),
+      once: true
+    })
   }
 
   public off(el: Element) {
     this.cache.delete(el)
     this.observer.unobserve(el)
     return this
+  }
+
+  private parseOptions(el: Element, onEnter?: OnOptions, onLeave?: Function) {
+    let options: EntryOptions = { el }
+    if (typeof onEnter === 'function') {
+      options = { ...options, onEnter }
+      if (typeof onLeave === 'function') {
+        options = { ...options, onLeave }
+      }
+    } else {
+      options = { ...onEnter, ...options }
+    }
+    return options
   }
 
   private handler(
