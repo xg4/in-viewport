@@ -30,11 +30,13 @@ const iv = new InViewport()
 const options = {} // IntersectionObserverInit options
 const iv = new InViewport(options)
 
-function onEnter() {
+// entry: IntersectionObserverEntry
+// observer: IntersectionObserver
+function onEnter(entry, observer) {
   console.log('el enter the viewport')
 }
 
-function onLeave() {
+function onLeave(entry, observer) {
   console.log('el leave the viewport')
 }
 
