@@ -1,3 +1,4 @@
+import 'intersection-observer'
 import Entry, { EntryOptions, EntryOptionsWithoutEl } from './entry'
 
 type OnOptions = EntryOptions | EntryOptionsWithoutEl | Function
