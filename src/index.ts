@@ -5,19 +5,20 @@ type OnOptions = EntryOptions | EntryOptionsWithoutEl | Function
 
 export default class InViewport {
   private observer: IntersectionObserver
-  private cache: WeakMap<Element, Entry>
+  private queue: Entry[]
 
   constructor(options?: IntersectionObserverInit) {
     this.observer = new IntersectionObserver(this.handler.bind(this), options)
-    this.cache = new WeakMap()
+    this.queue = []
   }
 
   public on(el: Element, onEnter?: OnOptions, onLeave?: Function) {
-    if (this.cache.has(el)) {
+    const hasEntry = this.queue.find(item => item.el === el)
+    if (hasEntry) {
       return this
     }
     const options = this.parseOptions(el, onEnter, onLeave)
-    this.cache.set(el, new Entry(options))
+    this.queue.push(new Entry(options))
     this.observer.observe(el)
     return this
   }
@@ -30,7 +31,7 @@ export default class InViewport {
   }
 
   public off(el: Element) {
-    this.cache.delete(el)
+    this.queue = this.queue.filter(item => item.el !== el)
     this.observer.unobserve(el)
     return this
   }
@@ -53,7 +54,7 @@ export default class InViewport {
     observer: IntersectionObserver
   ) {
     entries.forEach(entry => {
-      const target = this.cache.get(entry.target)
+      const target = this.queue.find(item => item.el === entry.target)
       if (!target) {
         return
       }
