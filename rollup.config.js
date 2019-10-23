@@ -18,7 +18,7 @@ export default {
       format: 'es'
     },
     {
-      name: pkg.name,
+      name: 'InViewport',
       file: pkg.browser,
       format: 'umd'
     }

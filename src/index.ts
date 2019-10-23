@@ -4,16 +4,11 @@ import Entry, { EntryOptions, EntryOptionsWithoutEl } from './entry'
 type OnOptions = EntryOptions | EntryOptionsWithoutEl | Function
 
 export default class InViewport {
-  private options: IntersectionObserverInit
   private observer: IntersectionObserver
   private cache: WeakMap<Element, Entry>
 
-  constructor(options: IntersectionObserverInit = {}) {
-    this.options = options
-    this.observer = new IntersectionObserver(
-      this.handler.bind(this),
-      this.options
-    )
+  constructor(options?: IntersectionObserverInit) {
+    this.observer = new IntersectionObserver(this.handler.bind(this), options)
     this.cache = new WeakMap()
   }
 
