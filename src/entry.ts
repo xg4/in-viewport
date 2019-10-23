@@ -13,7 +13,7 @@ export default class Entry {
   public el: Element
   private isInit: boolean
   private once: boolean
-  public enterCallback: Function
+  private enterCallback: Function
   private leaveCallback: Function
 
   get shouldDestroyByOnce() {
