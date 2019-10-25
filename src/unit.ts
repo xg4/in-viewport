@@ -1,15 +1,15 @@
 import { noop } from './utils'
 
-export interface EntryOptions {
+export interface UnitInit {
   el: Element
   onEnter?: Function
   onLeave?: Function
   once?: boolean
 }
 
-export type EntryOptionsWithoutEl = Omit<EntryOptions, 'el'>
+export type UnitInitWithoutEl = Omit<UnitInit, 'el'>
 
-export default class Entry {
+export default class Unit {
   public el: Element
   private isInit: boolean
   private once: boolean
@@ -20,12 +20,7 @@ export default class Entry {
     return this.isInit && this.once
   }
 
-  constructor({
-    el,
-    onEnter = noop,
-    onLeave = noop,
-    once = false
-  }: EntryOptions) {
+  constructor({ el, onEnter = noop, onLeave = noop, once = false }: UnitInit) {
     this.el = el
     this.enterCallback = onEnter
     this.leaveCallback = onLeave

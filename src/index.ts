@@ -1,11 +1,11 @@
 import 'intersection-observer'
-import Entry, { EntryOptions, EntryOptionsWithoutEl } from './entry'
+import Unit, { UnitInit, UnitInitWithoutEl } from './unit'
 
-type OnOptions = EntryOptions | EntryOptionsWithoutEl | Function
+type OnOptions = UnitInit | UnitInitWithoutEl | Function
 
 export default class InViewport {
   private observer: IntersectionObserver
-  private queue: Entry[]
+  private queue: Unit[]
 
   constructor(options?: IntersectionObserverInit) {
     this.observer = new IntersectionObserver(this.handler.bind(this), options)
@@ -13,12 +13,12 @@ export default class InViewport {
   }
 
   public on(el: Element, onEnter?: OnOptions, onLeave?: Function) {
-    const hasEntry = this.queue.find(item => item.el === el)
-    if (hasEntry) {
+    const hasUnit = this.queue.find(item => item.el === el)
+    if (hasUnit) {
       return this
     }
     const options = this.parseOptions(el, onEnter, onLeave)
-    this.queue.push(new Entry(options))
+    this.queue.push(new Unit(options))
     this.observer.observe(el)
     return this
   }
@@ -37,7 +37,7 @@ export default class InViewport {
   }
 
   private parseOptions(el: Element, onEnter?: OnOptions, onLeave?: Function) {
-    let options: EntryOptions = { el }
+    let options: UnitInit = { el }
     if (typeof onEnter === 'function') {
       options = { ...options, onEnter }
       if (typeof onLeave === 'function') {
@@ -54,7 +54,7 @@ export default class InViewport {
     observer: IntersectionObserver
   ) {
     entries.forEach(entry => {
-      const target = this.queue.find(item => item.el === entry.target)
+      const target = this.queue.find(unit => unit.el === entry.target)
       if (!target) {
         return
       }
