@@ -1,31 +1,31 @@
 import { noop } from './utils'
 
-export interface UnitInit {
+export interface NodeInit {
   el: Element
   onEnter?: Function
   onLeave?: Function
   once?: boolean
 }
 
-export type UnitInitWithoutEl = Omit<UnitInit, 'el'>
-
-export default class Unit {
+export default class Node {
   public el: Element
   private isInit: boolean
   private once: boolean
   private enterCallback: Function
   private leaveCallback: Function
+  public fired: boolean
 
-  get shouldDestroyByOnce() {
-    return this.isInit && this.once
+  get shouldDestroy() {
+    return this.isInit && this.once && this.fired
   }
 
-  constructor({ el, onEnter = noop, onLeave = noop, once = false }: UnitInit) {
+  constructor({ el, onEnter = noop, onLeave = noop, once = false }: NodeInit) {
     this.el = el
     this.enterCallback = onEnter
     this.leaveCallback = onLeave
-    this.isInit = false
     this.once = once
+    this.fired = false
+    this.isInit = false
   }
 
   public init() {
@@ -43,6 +43,7 @@ export default class Unit {
       return
     }
     this.leaveCallback(entry, observer)
+    this.fired = true
   }
 
   public onEnter(
@@ -50,5 +51,6 @@ export default class Unit {
     observer: IntersectionObserver
   ) {
     this.enterCallback(entry, observer)
+    this.fired = true
   }
 }

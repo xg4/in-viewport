@@ -1,11 +1,12 @@
 import 'intersection-observer'
-import Unit, { UnitInit, UnitInitWithoutEl } from './unit'
+import Node, { NodeInit } from './node'
+import { isFunc } from './utils'
 
-type OnOptions = UnitInit | UnitInitWithoutEl | Function
+type OnOptions = NodeInit | Omit<NodeInit, 'el'> | Function
 
 export default class InViewport {
   private observer: IntersectionObserver
-  private queue: Unit[]
+  private queue: Node[]
 
   constructor(options?: IntersectionObserverInit) {
     this.observer = new IntersectionObserver(this.handler.bind(this), options)
@@ -13,12 +14,12 @@ export default class InViewport {
   }
 
   public on(el: Element, onEnter?: OnOptions, onLeave?: Function) {
-    const hasUnit = this.queue.find(item => item.el === el)
-    if (hasUnit) {
+    const existing = this.queue.find(item => item.el === el)
+    if (existing) {
       return this
     }
     const options = this.parseOptions(el, onEnter, onLeave)
-    this.queue.push(new Unit(options))
+    this.queue.push(new Node(options))
     this.observer.observe(el)
     return this
   }
@@ -37,10 +38,10 @@ export default class InViewport {
   }
 
   private parseOptions(el: Element, onEnter?: OnOptions, onLeave?: Function) {
-    let options: UnitInit = { el }
-    if (typeof onEnter === 'function') {
+    let options: NodeInit = { el }
+    if (isFunc(onEnter)) {
       options = { ...options, onEnter }
-      if (typeof onLeave === 'function') {
+      if (isFunc(onLeave)) {
         options = { ...options, onLeave }
       }
     } else {
@@ -54,7 +55,7 @@ export default class InViewport {
     observer: IntersectionObserver
   ) {
     entries.forEach(entry => {
-      const target = this.queue.find(unit => unit.el === entry.target)
+      const target = this.queue.find(node => node.el === entry.target)
       if (!target) {
         return
       }
@@ -63,9 +64,10 @@ export default class InViewport {
         target.onEnter(entry, observer)
       } else {
         target.onLeave(entry, observer)
-        if (target.shouldDestroyByOnce) {
-          this.off(target.el)
-        }
+      }
+
+      if (target.shouldDestroy) {
+        this.off(target.el)
       }
 
       target.init()
