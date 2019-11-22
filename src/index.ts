@@ -1,8 +1,8 @@
 import 'intersection-observer'
-import Node, { NodeInit } from './node'
-import { isFunc } from './utils'
+import Node, { NodeOptions } from './node'
+import { isFunc, isObj } from './utils'
 
-type OnOptions = NodeInit | Omit<NodeInit, 'el'> | Function
+type OnOptions = NodeOptions | Omit<NodeOptions, 'el'> | Function
 
 export default class InViewport {
   private observer: IntersectionObserver
@@ -13,19 +13,25 @@ export default class InViewport {
     this.queue = []
   }
 
-  public on(el: Element, onEnter?: OnOptions, onLeave?: Function) {
-    const existing = this.queue.find(item => item.el === el)
+  public on(
+    el: Element | NodeOptions,
+    onEnter?: OnOptions,
+    onLeave?: Function
+  ) {
+    const options = this.parseOptions(el, onEnter, onLeave)
+
+    const existing = this.queue.find(item => item.el === options.el)
     if (existing) {
       return this
     }
-    const options = this.parseOptions(el, onEnter, onLeave)
+
     this.queue.push(new Node(options))
-    this.observer.observe(el)
+    this.observer.observe(options.el)
     return this
   }
 
   public once(el: Element, onEnter?: OnOptions, onLeave?: Function) {
-    return this.on(el, {
+    return this.on({
       ...this.parseOptions(el, onEnter, onLeave),
       once: true
     })
@@ -37,8 +43,24 @@ export default class InViewport {
     return this
   }
 
-  private parseOptions(el: Element, onEnter?: OnOptions, onLeave?: Function) {
-    let options: NodeInit = { el }
+  /**
+   *
+   * @param el
+   * @param onEnter
+   * @param onLeave
+   * (options)
+   * (el, options) (el, onEnter)
+   * (el, onEnter, onLeave)
+   */
+  private parseOptions(
+    el: Element | NodeOptions,
+    onEnter?: OnOptions,
+    onLeave?: Function
+  ) {
+    if (isObj<NodeOptions>(el)) {
+      return el
+    }
+    let options: NodeOptions = { el }
     if (isFunc(onEnter)) {
       options = { ...options, onEnter }
       if (isFunc(onLeave)) {

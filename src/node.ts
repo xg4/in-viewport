@@ -1,6 +1,6 @@
 import { noop } from './utils'
 
-export interface NodeInit {
+export interface NodeOptions {
   el: Element
   onEnter?: Function
   onLeave?: Function
@@ -19,7 +19,12 @@ export default class Node {
     return this.isInit && this.once && this.fired
   }
 
-  constructor({ el, onEnter = noop, onLeave = noop, once = false }: NodeInit) {
+  constructor({
+    el,
+    onEnter = noop,
+    onLeave = noop,
+    once = false
+  }: NodeOptions) {
     this.el = el
     this.enterCallback = onEnter
     this.leaveCallback = onLeave
