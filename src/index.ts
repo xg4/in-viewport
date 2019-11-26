@@ -1,8 +1,7 @@
+/* eslint-disable no-dupe-class-members */
 import 'intersection-observer'
 import Node, { NodeOptions } from './node'
-import { isFunc, isObj } from './utils'
-
-type OnOptions = NodeOptions | Omit<NodeOptions, 'el'> | Function
+import { isFunc, isElement, isObj } from './utils'
 
 export default class InViewport {
   private observer: IntersectionObserver
@@ -13,11 +12,13 @@ export default class InViewport {
     this.queue = []
   }
 
-  public on(
-    el: Element | NodeOptions,
-    onEnter?: OnOptions,
-    onLeave?: Function
-  ) {
+  public on(options: NodeOptions): this
+
+  public on(el: Element, onEnter?: Function, onLeave?: Function): this
+
+  public on(el: Element, options?: Omit<NodeOptions, 'el'>): this
+
+  public on(el: any, onEnter?: any, onLeave?: any) {
     const options = this.parseOptions(el, onEnter, onLeave)
 
     const existing = this.queue.find(item => item.el === options.el)
@@ -30,7 +31,7 @@ export default class InViewport {
     return this
   }
 
-  public once(el: Element, onEnter?: OnOptions, onLeave?: Function) {
+  public once(el: any, onEnter?: any, onLeave?: any) {
     return this.on({
       ...this.parseOptions(el, onEnter, onLeave),
       once: true
@@ -43,32 +44,33 @@ export default class InViewport {
     return this
   }
 
-  /**
-   *
-   * @param el
-   * @param onEnter
-   * @param onLeave
-   * (options)
-   * (el, options) (el, onEnter)
-   * (el, onEnter, onLeave)
-   */
+  private parseOptions(options: NodeOptions): NodeOptions
+
   private parseOptions(
-    el: Element | NodeOptions,
-    onEnter?: OnOptions,
+    el: Element,
+    options?: Omit<NodeOptions, 'el'>
+  ): NodeOptions
+
+  private parseOptions(
+    el: Element,
+    onEnter?: Function,
     onLeave?: Function
-  ) {
-    if (isObj<NodeOptions>(el)) {
+  ): NodeOptions
+
+  private parseOptions(el: any, onEnter?: any, onLeave?: any) {
+    if (isObj<NodeOptions>(el) && !isElement(el)) {
       return el
     }
-    let options: NodeOptions = { el }
+
     if (isFunc(onEnter)) {
-      options = { ...options, onEnter }
+      let options: NodeOptions = { el, onEnter }
       if (isFunc(onLeave)) {
         options = { ...options, onLeave }
       }
-    } else {
-      options = { ...onEnter, ...options }
+      return options
     }
+
+    const options: NodeOptions = { ...onEnter, el }
     return options
   }
 

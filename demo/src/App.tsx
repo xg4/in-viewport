@@ -18,14 +18,15 @@ const App: React.FC = () => {
   const fEl = useRef<HTMLDivElement>(null)
   useEffect(() => {
     aEl.current &&
-      iv.on(aEl.current, {
-        onEnter: () => {
+      iv.on(
+        aEl.current,
+        () => {
           console.log('a 进入视图')
         },
-        onLeave: () => {
+        () => {
           console.log('a 离开视图')
         }
-      })
+      )
     bEl.current &&
       iv.once(bEl.current, {
         onEnter: () => {
@@ -55,7 +56,8 @@ const App: React.FC = () => {
         }
       })
     eEl.current &&
-      iv.on(eEl.current, {
+      iv.on({
+        el: eEl.current,
         onEnter: () => {
           console.log('e 进入视图')
         },
