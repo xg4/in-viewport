@@ -17,54 +17,64 @@ const App: React.FC = () => {
   const eEl = useRef<HTMLDivElement>(null)
   const fEl = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    aEl.current &&
-      iv.on(
-        aEl.current,
-        () => {
-          console.log('a 进入视图')
-        },
-        () => {
-          console.log('a 离开视图')
-        }
-      )
-    bEl.current &&
-      iv.once(bEl.current, {
-        onEnter: () => {
-          console.log('b 进入视图')
-        },
-        onLeave: () => {
-          console.log('b 离开视图')
-        }
-      })
-    cEl.current &&
-      iv.once(
-        cEl.current,
-        () => {
-          console.log('c 进入视图')
-        },
-        () => {
-          console.log('c 离开视图')
-        }
-      )
-    dEl.current &&
-      iv.on(dEl.current, {
-        onEnter: () => {
-          console.log('d 进入视图')
-        },
-        onLeave: () => {
-          console.log('d 离开视图')
-        }
-      })
-    eEl.current &&
-      iv.on({
-        el: eEl.current,
-        onEnter: () => {
-          console.log('e 进入视图')
-        },
-        onLeave: () => {
-          console.log('e 离开视图')
-        }
-      })
+    iv.on(
+      aEl.current,
+      () => {
+        console.log('a 进入视图')
+      },
+      () => {
+        console.log('a 离开视图')
+      }
+    )
+
+    iv.on({
+      el: aEl.current,
+      onEnter: () => {
+        console.log('a 进入视图2')
+      },
+      onLeave: () => {
+        console.log('a 离开视图2')
+      },
+      once: true
+    })
+
+    iv.once(bEl.current, {
+      onEnter: () => {
+        console.log('b 进入视图')
+      },
+      onLeave: () => {
+        console.log('b 离开视图')
+      }
+    })
+
+    iv.once(
+      cEl.current,
+      () => {
+        console.log('c 进入视图')
+      },
+      () => {
+        console.log('c 离开视图')
+      }
+    )
+
+    iv.on(dEl.current, {
+      onEnter: () => {
+        console.log('d 进入视图')
+      },
+      onLeave: () => {
+        console.log('d 离开视图')
+      }
+    })
+
+    iv.on({
+      el: eEl.current,
+      onEnter: () => {
+        console.log('e 进入视图')
+      },
+      onLeave: () => {
+        console.log('e 离开视图')
+      }
+    })
   }, [])
   return (
     <div className="container">
@@ -131,16 +141,15 @@ const App: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <button
           onClick={() => {
-            fEl.current &&
-              iv.on(
-                fEl.current,
-                () => {
-                  console.log('f 进入视图')
-                },
-                () => {
-                  console.log('f 离开视图')
-                }
-              )
+            iv.on(
+              fEl.current,
+              () => {
+                console.log('f 进入视图')
+              },
+              () => {
+                console.log('f 离开视图')
+              }
+            )
           }}
           style={{
             margin: '0 20px'
@@ -150,7 +159,7 @@ const App: React.FC = () => {
         </button>
         <button
           onClick={() => {
-            fEl.current && iv.off(fEl.current)
+            iv.off(fEl.current)
           }}
         >
           取消监听 F

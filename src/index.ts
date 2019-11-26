@@ -22,14 +22,18 @@ export default class InViewport {
     const options = this.parseOptions(el, onEnter, onLeave)
 
     const existing = this.queue.find(item => item.el === options.el)
-    if (existing) {
-      return this
+    if (!existing) {
+      this.observer.observe(options.el)
     }
-
     this.queue.push(new Node(options))
-    this.observer.observe(options.el)
     return this
   }
+
+  public once(options: NodeOptions): this
+
+  public once(el: Element, onEnter?: Function, onLeave?: Function): this
+
+  public once(el: Element, options?: Omit<NodeOptions, 'el'>): this
 
   public once(el: any, onEnter?: any, onLeave?: any) {
     return this.on({
@@ -39,6 +43,7 @@ export default class InViewport {
   }
 
   public off(el: Element) {
+    // TODO: off one, not all el
     this.queue = this.queue.filter(item => item.el !== el)
     this.observer.unobserve(el)
     return this
@@ -79,22 +84,24 @@ export default class InViewport {
     observer: IntersectionObserver
   ) {
     entries.forEach(entry => {
-      const target = this.queue.find(node => node.el === entry.target)
-      if (!target) {
+      const nodeList = this.queue.filter(node => node.el === entry.target)
+      if (!nodeList.length) {
         return
       }
 
-      if (entry.isIntersecting) {
-        target.onEnter(entry, observer)
-      } else {
-        target.onLeave(entry, observer)
-      }
+      nodeList.forEach(n => {
+        if (entry.isIntersecting) {
+          n.onEnter(entry, observer)
+        } else {
+          n.onLeave(entry, observer)
+        }
 
-      if (target.shouldDestroy) {
-        this.off(target.el)
-      }
+        if (n.shouldDestroy) {
+          this.off(n.el)
+        }
 
-      target.init()
+        n.init()
+      })
     })
   }
 }

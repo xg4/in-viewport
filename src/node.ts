@@ -13,10 +13,15 @@ export default class Node {
   private once: boolean
   private enterCallback: Function
   private leaveCallback: Function
-  public fired: boolean
+  private enterCalled: number
+  private leaveCalled: number
 
   get shouldDestroy() {
-    return this.isInit && this.once && this.fired
+    return this.isInit && this.once && this.called
+  }
+
+  get called() {
+    return !!(this.enterCalled || this.leaveCalled)
   }
 
   constructor({
@@ -29,7 +34,8 @@ export default class Node {
     this.enterCallback = onEnter
     this.leaveCallback = onLeave
     this.once = once
-    this.fired = false
+    this.enterCalled = 0
+    this.leaveCalled = 0
     this.isInit = false
   }
 
@@ -48,7 +54,7 @@ export default class Node {
       return
     }
     this.leaveCallback(entry, observer)
-    this.fired = true
+    this.leaveCalled += 1
   }
 
   public onEnter(
@@ -56,6 +62,6 @@ export default class Node {
     observer: IntersectionObserver
   ) {
     this.enterCallback(entry, observer)
-    this.fired = true
+    this.enterCalled += 1
   }
 }
