@@ -21,8 +21,8 @@ export default class InViewport {
   public on(el: any, onEnter?: any, onLeave?: any) {
     const options = this.parseOptions(el, onEnter, onLeave)
 
-    const existing = this.queue.find(item => item.el === options.el)
-    if (!existing) {
+    const isAlreadyObserved = this.queue.some(item => item.el === options.el)
+    if (!isAlreadyObserved) {
       this.observer.observe(options.el)
     }
     this.queue.push(new Node(options))
@@ -43,7 +43,6 @@ export default class InViewport {
   }
 
   public off(el: Element) {
-    // TODO: off one, not all el
     this.queue = this.queue.filter(item => item.el !== el)
     this.observer.unobserve(el)
     return this
@@ -79,6 +78,14 @@ export default class InViewport {
     return options
   }
 
+  private destroyNode(node: Node) {
+    this.queue = this.queue.filter(n => n !== node)
+    const haveSameElement = this.queue.some(n => n.el === node.el)
+    if (!haveSameElement) {
+      this.observer.unobserve(node.el)
+    }
+  }
+
   private handler(
     entries: IntersectionObserverEntry[],
     observer: IntersectionObserver
@@ -89,18 +96,18 @@ export default class InViewport {
         return
       }
 
-      nodeList.forEach(n => {
+      nodeList.forEach(node => {
         if (entry.isIntersecting) {
-          n.onEnter(entry, observer)
+          node.onEnter(entry, observer)
         } else {
-          n.onLeave(entry, observer)
+          node.onLeave(entry, observer)
         }
 
-        if (n.shouldDestroy) {
-          this.off(n.el)
+        if (node.shouldDestroy) {
+          this.destroyNode(node)
         }
 
-        n.init()
+        node.init()
       })
     })
   }
